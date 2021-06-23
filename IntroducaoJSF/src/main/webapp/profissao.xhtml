@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="./principal.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:define name="conteudo">
+
+		<p:panel id="painel_conteudo" header="Profissão">
+			<p:tabView activeIndex="#{profissaoC.aba}">
+				<p:tab title="Pesquisa">
+					<h:form id="form_pesquisa">
+						<p:panelGrid columns="3" layout="flex"
+							columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4, p-col-12 p-md-3 p-xl-2"
+							contentStyleClass="ui-fluid">
+							<p:outputLabel for="profissao" value="Profissão:" />
+							<p:inputText id="profissao" value="#{profissaoC.profissao.nome}"
+								required="true" requiredMessage="Nome é obrigatório" />
+							<p:commandButton value="Pesquisar" update="tabela profissao"
+								action="#{profissaoC.pesquisarPorNome}" />
+						</p:panelGrid>
+
+						<p:dataTable id="tabela" var="profissao"
+							value="#{profissaoC.modelProfissoes}" rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,15,{ShowAll|'All'}">
+
+							<p:column headerText="Nome">
+								<h:outputText value="#{profissao.nome}" />
+							</p:column>
+
+							<p:column headerText="Descrição">
+								<h:outputText value="#{profissao.descricao}" />
+							</p:column>
+
+							<p:column headerText="Alterar / excluir">
+								<p:commandButton icon="pi pi-pencil" title="Alterar"
+									style="margin-right: 12px"
+									styleClass="rounded-button ui-button-outlined" process="@this"
+									actionListener="#{profissaoC.prepAlterar}" update="@all" />
+								<p:commandButton icon="pi pi-trash" title="Excluir" process="@this"
+									styleClass="rounded-button ui-button-outlined" 
+									actionListener="#{profissaoC.excluir}" update="tabela">
+									<p:confirm header="Confirmação" message="Deseja realmente excluir?" icon="pi pi-info-circle"/>									
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+						
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+							responsive="true" width="350">
+							<p:commandButton value="Não" type="button"
+								styleClass="ui-confirmdialog-no ui-button-flat" />
+							<p:commandButton value="Sim" type="button"
+								styleClass="ui-confirmdialog-yes" />
+						</p:confirmDialog>
+						
+					</h:form>
+
+				</p:tab>
+
+				<p:tab title="Novo">
+					<h:form id="form_novo">
+						<p:panelGrid columns="2" layout="flex"
+							columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-10"
+							contentStyleClass="ui-fluid">
+
+							<p:outputLabel for="nome" value="Profissão:" />
+							<p:inputText id="nome" value="#{profissaoC.profissao.nome}"
+								required="true" requiredMessage="Campo obrigatório" />
+
+							<p:outputLabel for="descricao" value="Descrição:" />
+							<p:inputTextarea id="descricao"
+								value="#{profissaoC.profissao.descricao}" />
+
+							<p:commandButton value="Salvar"
+								actionListener="#{profissaoC.salvar}" update="@all" />
+								
+						</p:panelGrid>
+					</h:form>
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+</ui:composition>

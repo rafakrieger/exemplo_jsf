@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="./principal.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:define name="conteudo">
+
+		<p:panel id="painel_conteudo" header="Pessoa Jurídica">
+			<p:tabView id="tab_view" activeIndex="#{pjuridicaC.aba}">
+				<p:tab title="Pesquisa">
+					<h:form id="form_pesquisa">
+						<p:panelGrid columns="3" layout="flex"
+							columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4, p-col-12 p-md-3 p-xl-2"
+							contentStyleClass="ui-fluid">
+							<p:outputLabel for="pj" value="Nome:" />
+							<p:inputText id="pj" value="#{pjuridicaC.pj.nome}"
+								required="true" requiredMessage="Nome é obrigatório" />
+							<p:commandButton value="Pesquisar" update="tabela, pj"
+								action="#{pjuridicaC.pesquisarPorNome}" />
+						</p:panelGrid>
+
+						<p:dataTable id="tabela" var="pessoa"
+							value="#{pjuridicaC.modelJuridicas}" rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,15,{ShowAll|'All'}">
+
+							<p:column headerText="Nome">
+								<h:outputText value="#{pessoa.nome}" />
+							</p:column>
+
+							<p:column headerText="E-mail">
+								<h:outputText value="#{pessoa.email}" />
+							</p:column>
+
+							<p:column headerText="CNPJ">
+								<h:outputText value="#{pessoa.cnpj}" />
+							</p:column>
+
+							<p:column headerText="Bairro">
+								<h:outputText value="#{pessoa.endereco.bairro}" />
+							</p:column>
+
+							<p:column headerText="Cidade">
+								<h:outputText value="#{pessoa.endereco.localidade}" />
+							</p:column>
+
+							<p:column headerText="Alterar / excluir">
+								<p:commandButton icon="pi pi-pencil" title="Alterar"
+									style="margin-right: 12px"
+									styleClass="rounded-button ui-button-outlined" process="@this"
+									actionListener="#{pjuridicaC.prepAlterar}" update="@all" />
+								<p:commandButton icon="pi pi-trash" title="Excluir"
+									process="@this" styleClass="rounded-button ui-button-outlined"
+									actionListener="#{pjuridicaC.excluir}" update="tabela">
+									<p:confirm header="Confirmação"
+										message="Deseja realmente excluir?" icon="pi pi-info-circle" />
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+							responsive="true" width="350">
+							<p:commandButton value="Não" type="button"
+								styleClass="ui-confirmdialog-no ui-button-flat" />
+							<p:commandButton value="Sim" type="button"
+								styleClass="ui-confirmdialog-yes" />
+						</p:confirmDialog>
+
+					</h:form>
+
+				</p:tab>
+
+				<p:tab title="Novo">
+					<h:form id="form_novo">
+						<p:panelGrid id="cadastro" columns="4" layout="flex"
+							columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4, p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4"
+							contentStyleClass="p-align-baseline ui-fluid">
+
+							<p:outputLabel for="nome" value="Nome:" />
+							<p:inputText id="nome" value="#{pjuridicaC.pj.nome}"
+								required="true" requiredMessage="Nome é obrigatório" />
+
+							<p:outputLabel for="email" value="E-mail:" />
+							<p:inputText id="email" value="#{pjuridicaC.pj.email}"
+								required="true" requiredMessage="E-mail é obrigatório" />
+
+							<p:outputLabel for="inscricao_estadual"
+								value="Inscrição estadual:" />
+							<p:inputText id="inscricao_estadual"
+								value="#{pjuridicaC.pj.inscricao_estadual}" required="true"
+								requiredMessage="Inscrição estadual é obrigatório" />
+
+							<p:outputLabel for="cnpj" value="CNPJ:" />
+							<p:inputMask id="cnpj" value="#{pjuridicaC.pj.cnpj}"
+								required="true" requiredMessage="CNPJ é obrigatório"
+								mask="99.999.999/9999-99" />
+
+							<h:outputLabel value="" />
+							<h:outputLabel value="" />
+							<h:outputLabel value="" />
+							<h:outputLabel value="" />
+
+							<p:outputLabel for="cep" value="CEP:" />
+							<p:inputMask id="cep" value="#{pjuridicaC.endereco.cep}"
+								required="true" requiredMessage="CEP é obrigatório" size="10"
+								mask="99999-999">
+								<p:ajax listener="#{pjuridicaC.buscarCep}" event="blur"
+									update="rua bairro cidade uf" />
+							</p:inputMask>
+
+							<p:outputLabel for="rua" value="Logradouro:" />
+							<p:inputText id="rua" value="#{pjuridicaC.endereco.logradouro}"
+								required="true" requiredMessage="Logradouro é obrigatório" />
+
+							<p:outputLabel for="numero" value="Número:" />
+							<p:inputText id="numero" value="#{pjuridicaC.endereco.numero}"
+								required="true" requiredMessage="Número é obrigatório" />
+
+							<p:outputLabel for="bairro" value="Bairro:" />
+							<p:inputText id="bairro" value="#{pjuridicaC.endereco.bairro}"
+								required="true" requiredMessage="Bairro é obrigatório" />
+
+							<p:outputLabel for="cidade" value="Cidade:" />
+							<p:inputText id="cidade"
+								value="#{pjuridicaC.endereco.localidade}" required="true"
+								requiredMessage="Cidade é obrigatório" />
+
+							<p:outputLabel for="uf" value="Estado:" />
+							<p:inputText id="uf" value="#{pjuridicaC.endereco.uf}"
+								required="true" requiredMessage="UF é obrigatório" />
+
+							<p:outputLabel for="complemento" value="Complemento:" />
+							<p:inputText id="complemento"
+								value="#{pjuridicaC.endereco.complemento}" required="true"
+								requiredMessage="Complemento é obrigatório" />
+
+							<h:outputLabel value="" />
+
+							<p:commandButton value="Adicionar telefones" type="button"
+								icon="pi pi-external-link" onclick="PF('tel').show()"
+								style="width: 20rem" />
+
+						</p:panelGrid>
+
+						<p:dataTable id="tabela_telefone" var="telefone"
+							value="#{pjuridicaC.modelTelefones}" rows="10" paginator="false"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+							rowsPerPageTemplate="5,10,15,{ShowAll|'All'}"
+							style="margin-top: 1rem">
+
+							<p:column headerText="Contato">
+								<h:outputText value="#{telefone.contato}" />
+							</p:column>
+
+							<p:column headerText="Número">
+								<h:outputText value="#{telefone.numero}" />
+							</p:column>
+
+							<p:column headerText="Tipo">
+								<h:outputText value="#{telefone.tipo}" />
+							</p:column>
+
+							<p:column headerText="Excluir">
+								<p:commandButton icon="pi pi-trash" title="Excluir"
+									process="@this" styleClass="rounded-button ui-button-outlined"
+									actionListener="#{pjuridicaC.apagarTelefone}"
+									update="tabela_telefone">
+									<p:confirm header="Confirmação"
+										message="Deseja realmente excluir?" icon="pi pi-info-circle" />
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+						<p:commandButton value="Salvar"
+							actionListener="#{pjuridicaC.salvar}" update="@all"
+							style="margin-top: 2rem" process="@this, cadastro"/>
+
+						<p:dialog id="dialog" header="Cadastrar telefones" widgetVar="tel"
+							minHeight="40" width="500" showEffect="fade" modal="true">
+							<p:panelGrid columns="2" layout="flex"
+								columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-10"
+								contentStyleClass="ui-fluid">
+								<p:outputLabel for="num_tel" value="Número:" />
+								<p:inputMask id="num_tel" value="#{pjuridicaC.telefone.numero}"
+									mask="(99)9999-9999" required="true"
+									requiredMessage="Telefone é obrigatório" />
+								<p:outputLabel for="contato" value="Contato:" />
+								<p:inputText id="contato" value="#{pjuridicaC.telefone.contato}" />
+								<p:outputLabel for="tipo" value="Tipo:" />
+								<p:selectOneMenu id="tipo" value="#{pjuridicaC.telefone.tipo}">
+									<f:selectItem itemLabel="Escolha um tipo..." itemValue="" />
+									<f:selectItem itemLabel="Fixo" itemValue="Fixo" />
+									<f:selectItem itemLabel="Celular" itemValue="Celular" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<f:facet name="footer">
+								<p:commandButton value="Salvar"
+									actionListener="#{pjuridicaC.listarTelefones}"
+									update="dialog, tabela_telefone" onclick="PF('tel').hide()"
+									style="width: 5rem" process="@this, dialog"/>
+							</f:facet>
+						</p:dialog>
+
+					</h:form>
+
+				</p:tab>
+
+			</p:tabView>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>

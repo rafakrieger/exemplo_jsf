@@ -14,6 +14,8 @@ import org.hibernate.Session;
 import br.com.correntista.dao.HibernateUtil;
 import br.com.correntista.dao.PessoaJuridicaDao;
 import br.com.correntista.dao.PessoaJuridicaDaoImpl;
+import br.com.correntista.dao.TelefoneDao;
+import br.com.correntista.dao.TelefoneDaoImpl;
 import br.com.correntista.entidade.Endereco;
 import br.com.correntista.entidade.PessoaJuridica;
 import br.com.correntista.entidade.Telefone;
@@ -54,16 +56,18 @@ public class PessoaJuridicaControle implements Serializable {
 
 	public void salvar() {
 		sessao = HibernateUtil.abrirSessao();
-		try {
+		try {		
 			pj.setTelefones(telefones);
 			endereco.setCliente(pj);			
 			pj.setEndereco(endereco);
 			pjDao.salvarOuAlterar(pj, sessao);
 			endereco = null;
 			pj = null;
+			telefones = null;
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Salvo com sucesso", null));
 			modelJuridicas = null;
+			modelTelefones = null;
 		} catch (HibernateException e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", null));
@@ -72,7 +76,8 @@ public class PessoaJuridicaControle implements Serializable {
 		}
 	}
 
-	public void listarTelefones() {
+
+	public void adicionarTelefone() {
 		if (telefones == null) {
 			telefones = new ArrayList<>();
 		}
@@ -85,8 +90,17 @@ public class PessoaJuridicaControle implements Serializable {
 	public void apagarTelefone() {
 		telefone = modelTelefones.getRowData();
 		telefones.remove(telefone);
-		modelTelefones = new ListDataModel<>(telefones);
-		telefone = new Telefone();
+		if (telefone.getId() != null) {
+			TelefoneDao telDao = new TelefoneDaoImpl();			
+			try {
+				sessao = HibernateUtil.abrirSessao();
+				telDao.remover(telefone, sessao);
+			} catch (HibernateException e) {
+				System.out.println("Erro ao excluir telefone do banco: " + e.getMessage());
+			} finally {
+				sessao.close();
+			}	
+		}
 	}
 
 	public void excluir() {

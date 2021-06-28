@@ -171,8 +171,8 @@
 										<h:outputText value="#{telefone.numero}" />
 									</f:facet>
 									<f:facet name="input">
-										<p:inputText value="#{telefone.numero}" style="width:100%"
-											label="Número" />
+										<p:inputMask value="#{telefone.numero}" style="width:100%"
+											label="Número" mask="(99)9999-9999" />
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
@@ -190,7 +190,7 @@
 									</f:facet>
 								</p:cellEditor>
 							</p:column>
-							
+
 							<p:column headerText="Alterar" style="width:6rem">
 								<p:rowEditor editTitle="Editar" cancelTitle="Cancelar"
 									saveTitle="Salvar" />
@@ -205,13 +205,14 @@
 										message="Deseja realmente excluir?" icon="pi pi-info-circle" />
 								</p:commandButton>
 							</p:column>
-							
+
 						</p:dataTable>
 
 
 						<p:commandButton value="Salvar"
 							actionListener="#{pjuridicaC.salvar}" update="@all"
-							style="margin-top: 2rem" process="@this, cadastro" />
+							style="margin-top: 2rem"
+							process="@this, cadastro, tabela_telefone" />
 
 						<p:dialog id="dialog" header="Cadastrar telefones" widgetVar="tel"
 							minHeight="40" width="500" showEffect="fade" modal="true">
@@ -233,7 +234,7 @@
 							</p:panelGrid>
 							<f:facet name="footer">
 								<p:commandButton value="Salvar"
-									actionListener="#{pjuridicaC.listarTelefones}"
+									actionListener="#{pjuridicaC.adicionarTelefone}"
 									update="dialog, tabela_telefone" onclick="PF('tel').hide()"
 									style="width: 5rem" process="@this, dialog" />
 							</f:facet>

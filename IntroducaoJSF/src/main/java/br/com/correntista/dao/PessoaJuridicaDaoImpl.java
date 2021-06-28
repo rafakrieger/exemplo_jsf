@@ -20,7 +20,7 @@ public class PessoaJuridicaDaoImpl extends BaseDaoImpl<PessoaJuridica, Long>
     @SuppressWarnings("unchecked")
 	@Override
     public List<PessoaJuridica> pesquisarPorNome(String nome, Session sessao) throws HibernateException {
-        Query consulta = sessao.createQuery("select distinct pj from PessoaJuridica pj left join fetch pj.telefones"
+        Query consulta = sessao.createQuery("select distinct(pj) from PessoaJuridica pj left join fetch pj.telefones"
                 + " where nome like :nome");
         consulta.setParameter("nome", "%" + nome + "%");
         return consulta.list();

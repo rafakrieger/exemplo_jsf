@@ -151,18 +151,49 @@
 							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 							currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 							rowsPerPageTemplate="5,10,15,{ShowAll|'All'}"
-							style="margin-top: 1rem">
+							style="margin-top: 1rem" editable="true">
 
 							<p:column headerText="Contato">
-								<h:outputText value="#{telefone.contato}" />
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{telefone.contato}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{telefone.contato}" style="width:100%"
+											label="Contato" />
+									</f:facet>
+								</p:cellEditor>
 							</p:column>
 
 							<p:column headerText="Número">
-								<h:outputText value="#{telefone.numero}" />
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{telefone.numero}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{telefone.numero}" style="width:100%"
+											label="Número" />
+									</f:facet>
+								</p:cellEditor>
 							</p:column>
 
 							<p:column headerText="Tipo">
-								<h:outputText value="#{telefone.tipo}" />
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{telefone.tipo}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{telefone.tipo}" style="width:100%">
+											<f:selectItem itemLabel="Fixo" itemValue="Fixo" />
+											<f:selectItem itemLabel="Celular" itemValue="Celular" />
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							
+							<p:column headerText="Alterar" style="width:6rem">
+								<p:rowEditor editTitle="Editar" cancelTitle="Cancelar"
+									saveTitle="Salvar" />
 							</p:column>
 
 							<p:column headerText="Excluir">
@@ -174,12 +205,13 @@
 										message="Deseja realmente excluir?" icon="pi pi-info-circle" />
 								</p:commandButton>
 							</p:column>
-
+							
 						</p:dataTable>
+
 
 						<p:commandButton value="Salvar"
 							actionListener="#{pjuridicaC.salvar}" update="@all"
-							style="margin-top: 2rem" process="@this, cadastro"/>
+							style="margin-top: 2rem" process="@this, cadastro" />
 
 						<p:dialog id="dialog" header="Cadastrar telefones" widgetVar="tel"
 							minHeight="40" width="500" showEffect="fade" modal="true">
@@ -203,7 +235,7 @@
 								<p:commandButton value="Salvar"
 									actionListener="#{pjuridicaC.listarTelefones}"
 									update="dialog, tabela_telefone" onclick="PF('tel').hide()"
-									style="width: 5rem" process="@this, dialog"/>
+									style="width: 5rem" process="@this, dialog" />
 							</f:facet>
 						</p:dialog>
 
